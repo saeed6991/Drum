@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 function App(props) {
   const styling = {
@@ -16,8 +16,55 @@ function App(props) {
     gridGap: "15px",
     margin: "20px",
   };
+
+  const [keyPressed, setKeyPressed] = useState("");
+
+  const handleKeyDown = (event) => {
+    console.log("Key pressed:", event.key);
+    const keyPressed = event.key;
+    setKeyPressed(keyPressed);
+    var button;
+    switch (keyPressed) {
+      case "q":
+        button = document.getElementById("Q");
+        break;
+      case "w":
+        button = document.getElementById("W");
+        break;
+      case "e":
+        button = document.getElementById("E");
+        break;
+      case "a":
+        button = document.getElementById("A");
+        break;
+      case "s":
+        button = document.getElementById("S");
+        break;
+      case "d":
+        button = document.getElementById("D");
+        break;
+      case "z":
+        button = document.getElementById("Z");
+        break;
+      case "x":
+        button = document.getElementById("X");
+        break;
+      case "c":
+        button = document.getElementById("C");
+        break;
+      default:
+        button = null;
+        break;
+    }
+    console.log(button);
+    if (button) {
+      console.log(button);
+      button.click();
+    }
+  };
+
   return (
-    <div className="container">
+    <div className="container" onKeyDown={handleKeyDown} tabIndex="0">
       <div className="keys"></div>
       <div className="buttonsContainer">
         <div className="powerButton" style={styling}>
@@ -26,7 +73,9 @@ function App(props) {
             <PowerButton />
           </div>
         </div>
-        <div className="stateLabel" style={labelStyling}></div>
+        <div className="stateLabel" style={labelStyling}>
+          <p>{keyPressed}</p>
+        </div>
         <div className="vollumeInput">
           <VolumeInput />
         </div>
@@ -60,6 +109,7 @@ class BankButtons extends React.Component {
       source: "",
     };
     this.buttonClicked = this.buttonClicked.bind(this);
+    this.audioRef = React.createRef();
   }
   buttonClicked() {
     console.log(this.props.buttonText);
@@ -141,15 +191,23 @@ class BankButtons extends React.Component {
     };
     if (!this.state.button) {
       return (
-        <div style={divStylingNormal} onClick={this.buttonClicked}>
+        <div
+          style={divStylingNormal}
+          id={this.props.buttonText}
+          onClick={this.buttonClicked}
+        >
           <p>{this.props.buttonText}</p>
         </div>
       );
     } else {
       return (
-        <div style={divStylingButtonPushed} onClick={this.buttonClicked}>
+        <div
+          style={divStylingButtonPushed}
+          id={this.props.buttonText}
+          onClick={this.buttonClicked}
+        >
           <p>{this.props.buttonText}</p>
-          <audio src={this.state.source} autoPlay></audio>
+          <audio src={this.state.source} autoPlay ref={this.audioRef}></audio>
         </div>
       );
     }
@@ -159,10 +217,16 @@ class BankButtons extends React.Component {
 class VolumeInput extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      volume: 60,
+    };
     this.handleVolumeKey = this.handleVolumeKey.bind(this);
   }
   handleVolumeKey(event) {
-    var volumeValue = event.target.value;
+    const newVolume = event.target.value;
+    this.setState({
+      volume: newVolume,
+    });
   }
   render() {
     return (
